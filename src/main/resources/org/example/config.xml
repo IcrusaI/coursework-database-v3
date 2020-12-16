@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<root>
+    <tables>
+        <name>bank</name>
+    </tables>
+    <tables>
+        <name>bank_account</name>
+    </tables>
+    <tables>
+        <name>calendar_credit</name>
+    </tables>
+    <tables>
+        <name>credit</name>
+    </tables>
+    <tables>
+        <name>credit_conditions</name>
+    </tables>
+    <tables>
+        <name>credit_history</name>
+    </tables>
+    <tables>
+        <name>currency</name>
+    </tables>
+    <tables>
+        <name>customers</name>
+    </tables>
+    <tables>
+        <name>customer_types</name>
+    </tables>
+    <tables>
+        <name>payment_history</name>
+    </tables>
+    <tables>
+        <name>request_credit</name>
+    </tables>
+</root>
