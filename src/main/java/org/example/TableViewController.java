@@ -5,19 +5,22 @@ import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import static org.example.App.loadFXML;
 
@@ -40,142 +43,75 @@ public class TableViewController extends Controller implements Initializable {
         stage.show();
     }
 
-    @FXML
-    private void refreshTable() throws IOException {
-        tableView.getColumns().clear();
-
-        requestTable(table);
-    }
 
     @Override
-    public void setData(String table) throws IOException {
+    public void setData(String table) {
         this.table = table;
 
         requestTable(table);
     }
 
     @Override
-    public void setData(ResultSet data) throws IOException {
-        System.out.println(data);
-    }
-
-    private void requestTable(String tableName) throws IOException {
-        ResultSet rs = null;
+    public void setData(ResultSet rs) {
         try {
-            rs = getTable(tableName);
-
             ResultSetMetaData rsmd = rs.getMetaData();
 
-            int count = rsmd.getColumnCount();
+            this.table = rsmd.getTableName(1);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
 
-            int i = 1;
-            while (i <= count) {
-                String name = rsmd.getColumnName(i);
+        createTable(rs);
+    }
 
-                // столбец для вывода имени
-                TableColumn column = new TableColumn(textConst.getString("tables." + tableName + "." + name));
-                // определяем фабрику для столбца с привязкой к свойству name
-                column.setCellValueFactory(new PropertyValueFactory<>(name));
+    private void createTable(ResultSet rs) {
+        try {
+            ResultSetMetaData rsmd = rs.getMetaData();
+            int countColumns = rsmd.getColumnCount();
+            String tableName = rsmd.getTableName(1);
 
-                tableView.getColumns().add(column);
+            ObservableList<List<String>> data = FXCollections.observableArrayList();
 
-                i++;
-            }
 
-            ObservableList data = FXCollections.observableArrayList();
+            while (rs.next()) {
+                List<String> row = new ArrayList<>();
 
-            // iterate through the java resultset
-            while (rs.next())
-            {
-                switch (tableName) {
-                    case "bank":
-                        data.add(new BankTableModel(
-                                rs.getString("name")
-                        ));
-                        break;
-                    case "bank_account":
-                        data.add(new BankAccountTableModel(
-                                rs.getInt("id"),
-                                rs.getInt("quantity"),
-                                rs.getInt("TIN")
-                        ));
-                        break;
-                    case "calendar_credit":
-                        data.add(new CalendarCreditTableModel(
-                                rs.getInt("id"),
-                                rs.getDate("date"),
-                                rs.getInt("payment"),
-                                rs.getInt("credit")
-                        ));
-                        break;
-                    case "credit":
-                        data.add(new CreditTableModel(
-                                rs.getInt("id"),
-                                rs.getInt("loan_amount"),
-                                rs.getInt("remains"),
-                                rs.getInt("credit_condition"),
-                                rs.getInt("bank_account")
-                        ));
-                        break;
-                    case "credit_conditions":
-                        data.add(new CreditConditionTableModel(
-                                rs.getInt("id"),
-                                rs.getString("name"),
-                                rs.getString("period"),
-                                rs.getInt("bet"),
-                                rs.getString("currency")
-                        ));
-                        break;
-                    case "credit_history":
-                        data.add(new CreditHistoryTableModel(
-                                rs.getInt("id"),
-                                rs.getInt("loan_amount"),
-                                rs.getInt("remains"),
-                                rs.getDate("expired"),
-                                rs.getString("bank"),
-                                rs.getInt("TIN"),
-                                rs.getInt("repayment"),
-                                rs.getInt("credit_condition")
-                        ));
-                        break;
-                    case "currency":
-                        data.add(new CurrencyTableModel(
-                                rs.getString("name")
-                        ));
-                        break;
-                    case "customers":
-                        data.add(new CustomersTableModel(
-                                rs.getInt("TIN"),
-                                rs.getString("name"),
-                                rs.getString("type"),
-                                rs.getInt("revenue")
-                        ));
-                        break;
-                    case "customer_types":
-                        data.add(new CustomerTypesTableModel(
-                                rs.getString("type")
-                        ));
-                        break;
-                    case "payment_history":
-                        data.add(new PaymentHistoryTableModel(
-                                rs.getInt("id"),
-                                rs.getInt("amount"),
-                                rs.getString("recipient"),
-                                rs.getInt("bank_account")
-                        ));
-                        break;
-                    case "request_credit":
-                        data.add(new RequestCreditTableModel(
-                                rs.getInt("id"),
-                                rs.getInt("loan_amount"),
-                                rs.getInt("credit_condition"),
-                                rs.getInt("TIN")
-                        ));
-                        break;
+                for (int i = 1; i <= countColumns; i++) {
+                    row.add(rs.getString(i));
                 }
+
+                data.add(row);
             }
 
+            for (int i = 0; i < countColumns; i++) {
+                String columnName = rsmd.getColumnName(i + 1);
+
+                String title;
+                try {
+                    title = textConst.getString("tables." + tableName + "." + columnName);
+                } catch (Exception e) {
+                    title = columnName;
+                }
+
+                TableColumn tc = new TableColumn(title);
+
+                final int colNo = i;
+
+                tc.setCellValueFactory((Callback<TableColumn.CellDataFeatures<List<String>, String>, ObservableValue<String>>) p ->
+                        new SimpleStringProperty((p.getValue().get(colNo))));
+                tableView.getColumns().add(tc);
+            }
             tableView.setItems(data);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    private void requestTable(String tableName) {
+        try {
+            ResultSet rs = getTable(tableName);
+
+            createTable(rs);
         } catch (ClassNotFoundException | SQLException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
             alert.showAndWait();

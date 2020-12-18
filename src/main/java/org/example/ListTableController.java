@@ -71,10 +71,12 @@ public class ListTableController extends Controller implements Initializable {
             ResultSet rs = getQuery(query);
 
             SQLRequest.setText("");
-            //switchToSecondary(rs);
+            switchToSecondary(rs);
         } catch (ClassNotFoundException | SQLException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
             alert.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
