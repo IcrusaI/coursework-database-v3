@@ -1,6 +1,6 @@
 package org.example;
 
-public class PaymentHistoryTableModel extends TableModel {
+public class PaymentHistoryTableModel {
     private Number id;
     private Number amount;
     private String recipient;

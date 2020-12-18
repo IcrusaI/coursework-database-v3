@@ -3,7 +3,7 @@ package org.example;
 public class BankTableModel {
     public String name;
 
-    BankTableModel(String name) {
+    public BankTableModel(String name) {
         this.name = name;
     }
 

@@ -2,20 +2,21 @@ package org.example;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
-public class PrimaryController extends Controller implements Initializable {
+public class ListTableController extends Controller implements Initializable {
     @FXML
     private VBox tablesList;
     ToggleGroup group;
+    @FXML
+    private TextArea SQLRequest;
 
     @FXML
     private void openTable() {
@@ -34,7 +35,12 @@ public class PrimaryController extends Controller implements Initializable {
 
     @FXML
     private void switchToSecondary(String table) throws IOException {
-        App.setRoot("secondary", table);
+        App.setRoot("tableView", table);
+    }
+
+    @FXML
+    private void switchToSecondary(ResultSet rs) throws IOException {
+        App.setRoot("tableView", rs);
     }
 
     private void createTablesList() {
@@ -55,6 +61,21 @@ public class PrimaryController extends Controller implements Initializable {
         button.setId("tables." + table.getName());
 
         return button;
+    }
+
+    @FXML
+    private void openSQL() {
+        String query = SQLRequest.getText();
+
+        try {
+            ResultSet rs = getQuery(query);
+
+            SQLRequest.setText("");
+            //switchToSecondary(rs);
+        } catch (ClassNotFoundException | SQLException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
+            alert.showAndWait();
+        }
     }
 
     @Override

@@ -1,6 +1,6 @@
 package org.example;
 
-public class CustomerTypesTableModel extends TableModel {
+public class CustomerTypesTableModel {
     private String type;
 
     public CustomerTypesTableModel(String type) {

@@ -2,7 +2,7 @@ package org.example;
 
 import java.util.Date;
 
-public class CreditHistoryTableModel extends TableModel {
+public class CreditHistoryTableModel {
     private Number id;
     private Number loan_amount;
     private Number remains;

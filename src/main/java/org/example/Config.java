@@ -12,6 +12,10 @@ public class Config {
     @JacksonXmlElementWrapper(useWrapping = false)
     public List<Table> tables;
 
+
+    @JacksonXmlProperty(isAttribute = false, localName = "tableName")
+    public String tableName;
+
     public Config() {}
 
     public Config(List<Table> tables) {
@@ -23,6 +27,13 @@ public class Config {
     }
     public void setTables(List<Table> tables) {
         this.tables = tables;
+    }
+
+    public String getTableName() {
+        return this.tableName;
+    }
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
     }
 }
 

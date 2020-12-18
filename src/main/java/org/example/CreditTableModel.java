@@ -1,6 +1,6 @@
 package org.example;
 
-public class CreditTableModel extends TableModel {
+public class CreditTableModel {
     private Number id;
     private Number loan_amount;
     private Number remains;

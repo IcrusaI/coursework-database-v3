@@ -8,7 +8,7 @@ public class CalendarCreditTableModel {
     private Number payment;
     private Date date;
 
-    CalendarCreditTableModel(Number id, Date date, Number payment, Number credit) {
+    public CalendarCreditTableModel(Number id, Date date, Number payment, Number credit) {
         this.id = id;
         this.date = date;
         this.payment = payment;

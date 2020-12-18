@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <root>
+    <tableName>lending_bank</tableName>
     <tables>
         <name>bank</name>
     </tables>

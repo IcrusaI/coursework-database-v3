@@ -1,6 +1,6 @@
 package org.example;
 
-public class CurrencyTableModel extends TableModel {
+public class CurrencyTableModel {
     public String name;
 
     public CurrencyTableModel(String name) {

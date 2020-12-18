@@ -11,11 +11,17 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 
-public class SecondaryController extends Controller implements Initializable {
+import static org.example.App.loadFXML;
+
+public class TableViewController extends Controller implements Initializable {
     @FXML
     TableView tableView;
 
@@ -23,20 +29,40 @@ public class SecondaryController extends Controller implements Initializable {
 
     @FXML
     private void switchToPrimary() throws IOException {
-        App.setRoot("primary");
+        App.setRoot("listTable");
+    }
+
+    @FXML
+    private void openCreate() throws IOException {
+        Scene scene = new Scene(loadFXML("createTable", table), 640, 480);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    @FXML
+    private void refreshTable() throws IOException {
+        tableView.getColumns().clear();
+
+        requestTable(table);
     }
 
     @Override
-    public void setData(String table) {
+    public void setData(String table) throws IOException {
         this.table = table;
 
         requestTable(table);
     }
 
-    private void requestTable(String tableName) {
+    @Override
+    public void setData(ResultSet data) throws IOException {
+        System.out.println(data);
+    }
+
+    private void requestTable(String tableName) throws IOException {
         ResultSet rs = null;
         try {
-            rs = getQuery(tableName);
+            rs = getTable(tableName);
 
             ResultSetMetaData rsmd = rs.getMetaData();
 
@@ -55,8 +81,6 @@ public class SecondaryController extends Controller implements Initializable {
 
                 i++;
             }
-            System.out.println("asd");
-
 
             ObservableList data = FXCollections.observableArrayList();
 
@@ -152,10 +176,9 @@ public class SecondaryController extends Controller implements Initializable {
             }
 
             tableView.setItems(data);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (ClassNotFoundException | SQLException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
+            alert.showAndWait();
         }
     }
 

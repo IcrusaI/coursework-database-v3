@@ -5,7 +5,7 @@ public class BankAccountTableModel {
     public Number quantity;
     public Number TIN;
 
-    BankAccountTableModel(Number id, Number quantity, Number TIN) {
+    public BankAccountTableModel(Number id, Number quantity, Number TIN) {
         this.id = id;
         this.quantity = quantity;
         this.TIN = TIN;

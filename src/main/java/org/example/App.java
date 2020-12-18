@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.ResultSet;
 import java.util.ResourceBundle;
 
 /**
@@ -23,7 +24,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("primary"), 640, 480);
+        scene = new Scene(loadFXML("listTable"), 640, 480);
         stage.setScene(scene);
         stage.show();
     }
@@ -32,11 +33,15 @@ public class App extends Application {
         scene.setRoot(loadFXML(fxml, table));
     }
 
+    static void setRoot(String fxml, ResultSet rs) throws IOException {
+        scene.setRoot(loadFXML(fxml, rs));
+    }
+
     static void setRoot(String fxml) throws IOException {
         scene.setRoot(loadFXML(fxml, ""));
     }
 
-    private static Parent loadFXML(String fxml, String table) throws IOException {
+    public static Parent loadFXML(String fxml, String table) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
         Parent root = fxmlLoader.load();
 
@@ -46,7 +51,17 @@ public class App extends Application {
         return root;
     }
 
-    private static Parent loadFXML(String fxml) throws IOException {
+    public static Parent loadFXML(String fxml, ResultSet rs) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
+        Parent root = fxmlLoader.load();
+
+        Controller controller = fxmlLoader.getController();
+        controller.setData(rs);
+
+        return root;
+    }
+
+    public static Parent loadFXML(String fxml) throws IOException {
         return loadFXML(fxml, "");
     }
 
